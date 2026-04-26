@@ -1,0 +1,11 @@
+session for 2026-4-26
+  started @ 7:07am
+  finished @ 8:20am
+
+  created git repository for dsp driver app
+  achieved first build of .class, .dex files
+
+  next session
+    design a proper build, test cycle
+      ChatGPT does NOT know how to do this. Don't ask for it's help
+    export PATH=$PATH:$ANDROID_SDK_ROOT/build-tools/34.0.0 needs to be added to the Dockerfile so aapt is available in the path
