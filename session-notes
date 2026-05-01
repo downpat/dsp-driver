@@ -12,6 +12,7 @@ session for 2026-4-26
 
 session for 2026-5-1
   started @ 8:33am
+  finished @ 1:33pm
 
   updated dockerfile to include Android build tools in the path
   built the .dex file by starting with a jar file created from the package that contains the .class file
@@ -26,6 +27,34 @@ session for 2026-5-1
   packaged all build commands into apk_build.sh
   debugged a path package issue with the apk
   launched the first version of the app on my phone
+  explored the directory structure of the phone
+    apps seem to be completely sandboxed
+    credentials are stored in folders that need root access
+    Flex doesn't seem to save anything at all to user-available files
+    So if we want to see what Flex is doing on the file system, we'll have to root this phone
+      We'd also have to pray that doesn't break any essential work functions - Flex, ADP, etc
+    so if we want to authenticate with Amazon credentials, we'll probably need to incorporate that
+    we already know that Amazon doesn't provide open access to the Flex API, but we also know that
+      they're not exactly locking it down either
+    So here's a list of things we need:
+      A way to understand what data Flex is storing on the device
+        Starts with root access
+        Might not have any practical benefits because our app won't have access to these files
+      A way to authenticate to the Flex API
+      A way to understand what endpoints of the API are available and what data we can get from it
+  brainstorming with Claude about capturing Flex network traffic
+    Setup PCAPdroid on my phone, tried to login to Flex, "connection refused"
+      Seems like Amazon is ready for the PCAPdroid approach, at least with the login, which is
+        probably a whole different team at Amazon, and the Flex team is just using a library
+        for it
+    I logged in and restarted the PCAPdroid VPN, every connection is still refused. Seems like it's locked down pretty tight
+    After stopping PCAPdroid, the app works fine, it's not just the Flex login
+    We're going to have to try a mitm using the home router and a laptop first. And then, more than likely, we're
+      going to have to do a field test with a router and laptop in the van with me - or maybe just a rooted burner
+      phone. That's the only way we're going to get the data we need.
+    One of the things I need to remind myself of is that even though Amazon's security features are locking me out
+      of the development I want to do, I'm not actually doing anything nefarious. I'm actually trying to make their
+      delivery drivers more efficient, and that helps them.
 
   todo
     need to make sure I'm leaving proper context for myself, I had to re-read the ChatGPT convo to remember what I was doing
@@ -42,6 +71,9 @@ session for 2026-5-1
       is part of the Docker build
 
     next session
+      setup home network and laptop to create a mitm proxy that will collect Flex network traffic
+      design app architecture to separate concerns - data gathering modules should run on laptop
+        as effectively as phone - be modular, you know how
       keystore should be generated in Dockerfile
         strengthen the passwords on the keysign commands
       update Dockerfile CMD to use apk_build.sh so that the docker run command builds an apk
