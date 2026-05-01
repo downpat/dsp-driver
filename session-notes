@@ -9,3 +9,42 @@ session for 2026-4-26
     design a proper build, test cycle
       ChatGPT does NOT know how to do this. Don't ask for it's help
     export PATH=$PATH:$ANDROID_SDK_ROOT/build-tools/34.0.0 needs to be added to the Dockerfile so aapt is available in the path
+
+session for 2026-5-1
+  started @ 8:33am
+
+  updated dockerfile to include Android build tools in the path
+  built the .dex file by starting with a jar file created from the package that contains the .class file
+    the d8 command runs from the parent of the "com" directory, the package root
+  built the "unaligned.apk" by updating the "aapt" command to use the directory structure for the package
+    main problem was trying to include AndroidManifext.xml in the package when the -M argument already identifies it
+      this was causing a duplicate file error
+  updated "build/apk/unaligned.apk" with "classes.dex" using zip command
+  aligned the apk using zipalign command
+  created a debug keystore for signing apks
+  built the first apk
+  packaged all build commands into apk_build.sh
+  debugged a path package issue with the apk
+  launched the first version of the app on my phone
+
+  todo
+    need to make sure I'm leaving proper context for myself, I had to re-read the ChatGPT convo to remember what I was doing
+      I am not an expert in Android development... yet. So I need to leave myself fuller context between sessions
+    design the right command for building classes.dex
+      build a jar file with "jar cf classes.jar" from the "build/obj" directory, it will pick up the packages there
+        "dex" files can't be present or they will be compiled into the jar and you can't mix .dex and .class files in an Android apk
+    create a build.sh or something like it that builds and installs the APK
+    make build.sh the CMD for the Dockerfile
+    run the Dockerfile with no extra command to generate a build and run the app on the phone
+    investigate Flex directories on the phone
+    strengthen the passwords on the keysign commands
+    keystore should be generated in a bash file and added to the Dockerfile as part of the build, not the CMD, so the keystore creation
+      is part of the Docker build
+
+    next session
+      keystore should be generated in Dockerfile
+        strengthen the passwords on the keysign commands
+      update Dockerfile CMD to use apk_build.sh so that the docker run command builds an apk
+        build steps should be
+         docker run ...
+         adb install path/to/apk
