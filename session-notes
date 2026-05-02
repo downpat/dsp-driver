@@ -80,3 +80,49 @@ session for 2026-5-1
         build steps should be
          docker run ...
          adb install path/to/apk
+
+session for 2026-5-2
+  started @ 8:44am
+  finished @ 11:29am
+
+  ok, so this session needs to start with the bigger questions
+    If Amazon has locked down the Flex API to this extent, is it worth the risk to build the app in the first place?
+    If we have to use a rooted phone to even get an idea of what the Flex API is doing, is there some mechanism we
+      will be able to use on non-rooted phones to access the API?
+    So the end goal is to have an app that uses an Amazon user's credentials to access the Flex API.
+    But if the Flex API is locked down, then this might be impossible.
+    So it makes sense to setup a "Login with Amazon" feature and see if using those credentials to access *any* endpoint of
+      the Flex API is even possible.
+    My initial plan was to simply turn on some kind of network traffic analyzer on my phone and run Flex all day at work
+      and then analyze the traffic at home and use that data to incorporate the Flex API into my app. But because of
+      Amazon's security protections, that is going to prove to be much more difficult than anticipated, and it brings
+      the viability of the entire project into question.
+    Another possible issue is that for even trying to reverse engineer this thing, my Flex account could be shut down,
+      and that would certainly affect work, so we need to be careful there too.
+  
+  There were people accessing the Flex API in the past. Is that still a thing?
+    There are definitely still bots out there, but it's not clear how well they work or how Amazon polices them.
+
+  so long as I am working for a DSP, this remains the most viable short-to-midterm career path
+
+  alternate reverse engineering strategy:
+    -setup a burner Amazon account to use with Flex
+    -setup a "Login with Amazon" (LWA) library
+    -analyze the "attempted" traffic that Flex uses with pcapdroid
+    -attempt to re-create that traffic programatically with LWA library
+
+  the above alternate strategy isn't quite right either, because right now the traffic we do have is basically
+    encrypted, failed DNS requests. It doesn't tell us anything about endpoints
+
+  so this here are the next steps to determine viability:
+    -setup router and/or laptop to decrypt and analyze Flex traffic at home
+    -analyze the traffic and identify a few tasks to recreate
+    -write some code to recreate the tasks and verify API access
+    -verify viability and design next steps, including a field test for greater endpoint analysis
+
+    next session
+      setup home network and laptop to create a mitm proxy that will collect Flex network traffic
+      design a software module that will try to recreate that network traffic
+        write a simple Java/Kotlin CLI that imports the module and tests it
+          this will start making our code modular and allow us to test features on the laptop before installing to Android
+      continue to understand the viability of this project
